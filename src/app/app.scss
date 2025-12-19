@@ -1,0 +1,13 @@
+/* App Component Styles */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* Router Outlet Animation Wrapper */
+router-outlet + * {
+  display: block;
+  animation: fadeIn 0.4s ease-in-out;
+}
+

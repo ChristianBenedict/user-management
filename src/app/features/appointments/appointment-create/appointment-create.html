@@ -1,0 +1,187 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h2 class="mb-4">Buat Appointment Baru</h2>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label class="form-label">Judul Appointment</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="title"
+            placeholder="Masukkan judul appointment"
+            [class.is-invalid]="form.get('title')?.invalid && form.get('title')?.touched"
+          />
+          <div
+            *ngIf="form.get('title')?.invalid && form.get('title')?.touched"
+            class="invalid-feedback"
+          >
+            {{ getFieldError('title') }}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Tanggal Mulai</label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="startDate"
+              [class.is-invalid]="form.get('startDate')?.invalid && form.get('startDate')?.touched"
+            />
+            <div
+              *ngIf="form.get('startDate')?.invalid && form.get('startDate')?.touched"
+              class="invalid-feedback"
+            >
+              {{ getFieldError('startDate') }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Waktu Mulai</label>
+            <input
+              type="time"
+              class="form-control"
+              formControlName="startTime"
+              [class.is-invalid]="form.get('startTime')?.invalid && form.get('startTime')?.touched"
+            />
+            <div
+              *ngIf="form.get('startTime')?.invalid && form.get('startTime')?.touched"
+              class="invalid-feedback"
+            >
+              {{ getFieldError('startTime') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Tanggal Selesai</label>
+            <input
+              type="date"
+              class="form-control"
+              formControlName="endDate"
+              [class.is-invalid]="form.get('endDate')?.invalid && form.get('endDate')?.touched"
+            />
+            <div
+              *ngIf="form.get('endDate')?.invalid && form.get('endDate')?.touched"
+              class="invalid-feedback"
+            >
+              {{ getFieldError('endDate') }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Waktu Selesai</label>
+            <input
+              type="time"
+              class="form-control"
+              formControlName="endTime"
+              [class.is-invalid]="form.get('endTime')?.invalid && form.get('endTime')?.touched"
+            />
+            <div
+              *ngIf="form.get('endTime')?.invalid && form.get('endTime')?.touched"
+              class="invalid-feedback"
+            >
+              {{ getFieldError('endTime') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Pilih Peserta (Opsional)</label>
+          <div *ngIf="loadingUsers" class="text-muted">Memuat daftar user...</div>
+          <div *ngIf="!loadingUsers" class="list-group">
+            <div
+              *ngFor="let user of users"
+              class="list-group-item list-group-item-action"
+              [class.active]="isParticipantSelected(user.id)"
+              (click)="toggleParticipant(user.id)"
+              style="cursor: pointer"
+            >
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ user.name }}</strong> ({{ user.username }})<br>
+                  <small class="text-muted">Timezone: {{ user.preferred_timezone }}</small>
+                </div>
+                <input
+                  type="checkbox"
+                  [checked]="isParticipantSelected(user.id)"
+                  (change)="toggleParticipant(user.id)"
+                  (click)="$event.stopPropagation()"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timezone Preview -->
+        <div *ngIf="timezonePreviews.length > 0" class="mb-3">
+          <label class="form-label fw-bold">Preview Waktu di Semua Timezone:</label>
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-sm table-bordered mb-0">
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Timezone</th>
+                      <th>Waktu Mulai</th>
+                      <th>Waktu Selesai</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let preview of timezonePreviews" [class.table-danger]="!preview.isValid" [class.table-success]="preview.isValid">
+                      <td><strong>{{ preview.userName }}</strong></td>
+                      <td><small>{{ preview.timezone }}</small></td>
+                      <td>{{ preview.startTime }}</td>
+                      <td>{{ preview.endTime }}</td>
+                      <td>
+                        <span *ngIf="preview.isValid" class="badge bg-success">Valid</span>
+                        <span *ngIf="!preview.isValid" class="badge bg-danger">Di luar jam kerja (09:00-17:00)</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div *ngIf="hasInvalidPreviews()" class="alert alert-warning mt-2 mb-0" role="alert">
+                <small><strong>Peringatan:</strong> Beberapa waktu berada di luar jam kerja (09:00-17:00) untuk beberapa participant. Appointment mungkin akan ditolak saat submit.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+          {{ errorMessage }}
+        </div>
+
+        <div class="d-flex gap-2">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="loading"
+          >
+            <span
+              *ngIf="loading"
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            {{ loading ? 'Menyimpan...' : 'Buat Appointment' }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="cancel()"
+            [disabled]="loading"
+          >
+            Batal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+

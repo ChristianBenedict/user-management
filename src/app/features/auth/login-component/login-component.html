@@ -1,0 +1,38 @@
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card p-4 shadow" style="width: 360px">
+    <h4 class="text-center mb-3">Login</h4>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Masukkan Username"
+          formControlName="username"
+          [class.is-invalid]="form.get('username')?.invalid && form.get('username')?.touched"
+        />
+        <div
+          *ngIf="form.get('username')?.invalid && form.get('username')?.touched"
+          class="invalid-feedback"
+        >
+          {{ getFieldError('username') }}
+        </div>
+      </div>
+
+      <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm me-2"
+          role="status"
+          aria-hidden="true"
+        ></span>
+        {{ loading ? 'Loading...' : 'Login' }}
+      </button>
+
+      <div class="mt-2 text-danger text-center" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Daftar Appointment</h2>
+    <button class="btn btn-primary" (click)="navigateToCreate()">
+      + Buat Appointment Baru
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && appointments.length === 0" class="alert alert-info">
+    Tidak ada appointment yang akan datang.
+  </div>
+
+  <div *ngIf="!loading && appointments.length > 0" class="row">
+    <div class="col-md-6 mb-3" *ngFor="let appointment of appointments">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ appointment.title }}</h5>
+          <p class="card-text">
+            <strong>Waktu:</strong><br>
+            Mulai: {{ appointment.start_local }}<br>
+            Selesai: {{ appointment.end_local }}
+          </p>
+          <p class="card-text">
+            <strong>Dibuat oleh:</strong> {{ appointment.creator.name }}
+          </p>
+          <p class="card-text">
+            <strong>Peserta:</strong>
+            <span *ngFor="let participant of appointment.participants; let last = last">
+              {{ participant.name }}<span *ngIf="!last">, </span>
+            </span>
+          </p>
+          <button 
+            class="btn btn-danger btn-sm" 
+            (click)="deleteAppointment(appointment.id)"
+            *ngIf="getCurrentUser() && appointment.creator_id === getCurrentUser()!.id"
+          >
+            Hapus
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

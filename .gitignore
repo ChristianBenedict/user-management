@@ -41,3 +41,13 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Environment variables
+.env
+backend/.env
+*.env
+
+# Go build files
+backend/*.exe
+backend/appointment-management
+backend/appointment-management.exe

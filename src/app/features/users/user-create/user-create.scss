@@ -1,0 +1,17 @@
+/* Create User Component Styles */
+.container {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.card {
+  animation: scaleIn 0.4s ease-in-out;
+}
+
+.form-control, .form-select {
+  transition: all 0.3s ease;
+  
+  &:focus {
+    transform: scale(1.01);
+  }
+}
+

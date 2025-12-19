@@ -1,0 +1,23 @@
+.table {
+  font-size: 14px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.pagination .page-link {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Success Message Animation */
+.alert-success {
+  animation: slideIn 0.3s ease-in-out;
+}
+
+/* Delete Dialog Animation */
+.modal {
+  backdrop-filter: blur(4px);
+  
+  .modal-content {
+    animation: scaleIn 0.3s ease-in-out;
+  }
+}
